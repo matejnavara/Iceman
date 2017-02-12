@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     //Game Logic Elements
     public bool gameOver;
     public bool paused;
+
 	private bool bestDistance;
     private bool bestTime;
     private float timer;
@@ -136,6 +137,8 @@ public class GameManager : MonoBehaviour {
         playerSize -= meltRate;
         print("Player scale = " + playerScale.ToString());
         player.transform.localScale = new Vector3(playerScale *(playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
+
+        //if(playerSize )
     }
 
 
