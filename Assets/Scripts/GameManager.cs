@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
 
     //UI Elements
     private Text timerText, playerSizeText, finalText, bestDistanceText, bestTimeText;
+    private Image sunIcon;
+    private RectTransform tempIcon;
     private GameObject gameoverPanel;
     private Button playagainButton, mainmenuButton;
 
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        playerScale = 5.0f;
+        playerScale = 7f;
         playerSize = 100f;
         meltRate = 0.05f;
 
@@ -137,9 +139,27 @@ public class GameManager : MonoBehaviour {
     {
         if (pl.UnderSun)
         {
-            playerSize -= meltRate;
-            player.transform.localScale = new Vector3(playerScale * (playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
-        }       
+            if(tempIcon.rect.height < 400)
+            {
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.2f);
+
+            }
+            //playerSize -= meltRate * tempIcon.rect.height/100;
+            sunIcon.color = Color.yellow;
+        }
+        else
+        {
+            if (tempIcon.rect.height > 100)
+            {
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 0.4f);
+
+            }
+            //playerSize -= (meltRate * 0.05f) * tempIcon.rect.height / 100;
+            sunIcon.color = Color.black;
+        }
+        playerSize -= meltRate * tempIcon.rect.height / 100;
+        player.transform.localScale = new Vector3(playerScale * (playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
+
     }
 
 
@@ -218,6 +238,14 @@ public class GameManager : MonoBehaviour {
         if (playerSizeText == null)
         {
             playerSizeText = GameObject.Find("Canvas/PlayerSizeText").GetComponent<Text>();
+        }
+        if (sunIcon == null)
+        {
+            sunIcon = GameObject.Find("Canvas/SunImage").GetComponent<Image>();
+        }
+        if (tempIcon == null)
+        {
+            tempIcon = GameObject.Find("Canvas/Temperature").GetComponent<RectTransform>();
         }
     }
 

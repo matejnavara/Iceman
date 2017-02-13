@@ -23,15 +23,32 @@ public class PlayerLogic : MonoBehaviour {
         sunDir.Normalize();
         sunDir *= 100;
 
-        if (!Physics.Raycast(transform.position, transform.position - sunDir, 30))
-        {
-            Debug.DrawLine(transform.position, transform.position - sunDir, Color.red);
-            UnderSun = true;
+        int inSun = 0;
+        int outSun = 0;
 
+        Transform[] allChildren = GetComponentsInChildren<Transform>();
+
+        foreach (Transform child in allChildren)
+        {
+            
+            if (!Physics.Raycast(child.position, child.position - sunDir, 10))
+            {
+                Debug.DrawLine(child.position, child.position - sunDir, Color.red);
+                inSun++;
+            }
+            else
+            {
+                Debug.DrawLine(child.position, child.position - sunDir, Color.green);
+                outSun++;
+            }
+        }
+        print("In sun: " + inSun + " VS Out sun: " + outSun);
+        if (inSun > outSun)
+        {
+            UnderSun = true;
         }
         else
         {
-            Debug.DrawLine(transform.position, transform.position - sunDir, Color.green);
             UnderSun = false;
         }
 
