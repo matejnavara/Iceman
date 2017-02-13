@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
     private bool bestTime;
     private float timer;
 
+    public PlayerLogic pl;
     public float playerScale;
     public float playerSize;
     public float meltRate;
@@ -134,11 +135,11 @@ public class GameManager : MonoBehaviour {
 
     void meltPlayer()
     {
-        playerSize -= meltRate;
-        print("Player scale = " + playerScale.ToString());
-        player.transform.localScale = new Vector3(playerScale *(playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
-
-        //if(playerSize )
+        if (pl.UnderSun)
+        {
+            playerSize -= meltRate;
+            player.transform.localScale = new Vector3(playerScale * (playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
+        }       
     }
 
 
@@ -208,6 +209,7 @@ public class GameManager : MonoBehaviour {
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
+            pl = player.GetComponent<PlayerLogic>();
         }
         if (timerText == null)
         {
