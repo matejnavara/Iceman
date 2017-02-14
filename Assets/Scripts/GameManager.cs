@@ -15,8 +15,8 @@ public class GameManager : MonoBehaviour {
     private Text timerText, playerSizeText, finalText, bestDistanceText, bestTimeText;
     private Image sunIcon;
     private RectTransform tempIcon;
-    private GameObject gameoverPanel;
-    private Button playagainButton, mainmenuButton;
+    public GameObject gameoverPanel, gameUi;
+    private Button meltAgainButton, mainmenuButton;
 
     //Game Logic Elements
     public bool gameOver;
@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour {
     private float timer;
 
     public PlayerLogic pl;
+    public SplashLogic sl;
     public float playerScale;
     public float playerSize;
     public float meltRate;
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         GetThisGameManager();
-        soundCheck();
+        //soundCheck();
     }
 
     void GetThisGameManager()
@@ -70,9 +71,10 @@ public class GameManager : MonoBehaviour {
     {
         playerScale = 7f;
         playerSize = 100f;
-        meltRate = 0.05f;
+        meltRate = 0.03f;
 
         nullCheck();
+        gameoverPanel.SetActive(false);
         Reset();
         print("START again");
     }
@@ -94,6 +96,8 @@ public class GameManager : MonoBehaviour {
         //Counts down from defined "timer" to reach Game Over.
         if (!gameOver && !paused)
         {
+            gameUi.SetActive(true);
+            gameoverPanel.SetActive(false);
             meltPlayer();
             timer += Time.deltaTime;
 
@@ -106,6 +110,13 @@ public class GameManager : MonoBehaviour {
                 gameFinished();
                 print("GAME OVER");
             }
+        }
+        else
+        {
+            
+            gameUi.SetActive(false);
+            gameoverPanel.SetActive(true);
+            meltAgainButton.onClick.AddListener(delegate { Reset(); });
         }
         
     }
@@ -141,7 +152,7 @@ public class GameManager : MonoBehaviour {
         {
             if(tempIcon.rect.height < 400)
             {
-                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.2f);
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.4f);
 
             }
             //playerSize -= meltRate * tempIcon.rect.height/100;
@@ -151,7 +162,7 @@ public class GameManager : MonoBehaviour {
         {
             if (tempIcon.rect.height > 100)
             {
-                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 0.4f);
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 0.8f);
 
             }
             //playerSize -= (meltRate * 0.05f) * tempIcon.rect.height / 100;
@@ -159,6 +170,13 @@ public class GameManager : MonoBehaviour {
         }
         playerSize -= meltRate * tempIcon.rect.height / 100;
         player.transform.localScale = new Vector3(playerScale * (playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
+
+        if((int)playerSize % 5 == 0)
+        {
+            print("Spawning Puddle. Sploosh!");
+            sl.Fire();
+            GameObject newPuddle = (GameObject)Instantiate(Resources.Load("Prefabs/Puddle"), player.transform.position, player.transform.rotation);
+        }
 
     }
 
@@ -169,15 +187,14 @@ public class GameManager : MonoBehaviour {
     {
         gameOver = true;
         paused = true;
-        playerSizeText.enabled = false;
-        timerText.enabled = false;
         GameObject.FindGameObjectWithTag("Player").SetActive(false);
-        gameoverPanel.SetActive(true);
+        //gameUi.SetActive(false);
+        //gameoverPanel.SetActive(true);
 
-        checkHighScore();
+        //checkHighScore();
 
-        playagainButton.onClick.AddListener(delegate { Reset(); });
-        mainmenuButton.onClick.AddListener(delegate { MainMenu(); });
+        //meltAgainButton.onClick.AddListener(delegate { Reset(); });
+        //mainmenuButton.onClick.AddListener(delegate { MainMenu(); });
 
     }
 
@@ -207,10 +224,9 @@ public class GameManager : MonoBehaviour {
         paused = false;
         bestDistance = false;
         bestTime = false;
-
-        //gameoverPanel.SetActive(false);
-
-        audioBG = gameObject.GetComponent<AudioSource>();
+        gameUi.SetActive(true);
+        gameoverPanel.SetActive(false);
+        //audioBG = gameObject.GetComponent<AudioSource>();
       
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
@@ -225,27 +241,40 @@ public class GameManager : MonoBehaviour {
     //Checks initilization of UI elements
     void nullCheck()
     {
-        print("Nullcheck");
+        //print("Nullcheck");
         if (player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
             pl = player.GetComponent<PlayerLogic>();
+            sl = player.GetComponentInChildren<SplashLogic>();
+        }
+        if (gameoverPanel == null)
+        {
+            gameoverPanel = GameObject.Find("Canvas/GameOverPanel");
+        }
+        if (meltAgainButton == null)
+        {
+            meltAgainButton = GameObject.Find("Canvas/GameOverPanel/MeltAgainButton").GetComponent<Button>();
+        }
+        if (gameUi == null)
+        {
+            gameUi = GameObject.Find("Canvas/GameUI");
         }
         if (timerText == null)
         {
-            timerText = GameObject.Find("Canvas/TimerText").GetComponent<Text>();
+            timerText = GameObject.Find("Canvas/GameUI/TimerText").GetComponent<Text>();
         }
         if (playerSizeText == null)
         {
-            playerSizeText = GameObject.Find("Canvas/PlayerSizeText").GetComponent<Text>();
+            playerSizeText = GameObject.Find("Canvas/GameUI/PlayerSizeText").GetComponent<Text>();
         }
         if (sunIcon == null)
         {
-            sunIcon = GameObject.Find("Canvas/SunImage").GetComponent<Image>();
+            sunIcon = GameObject.Find("Canvas/GameUI/SunImage").GetComponent<Image>();
         }
         if (tempIcon == null)
         {
-            tempIcon = GameObject.Find("Canvas/Temperature").GetComponent<RectTransform>();
+            tempIcon = GameObject.Find("Canvas/GameUI/Temperature").GetComponent<RectTransform>();
         }
     }
 

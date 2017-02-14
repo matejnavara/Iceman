@@ -19,6 +19,25 @@ public class PlayerLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        checkExposure();
+
+    }
+
+    public bool UnderSun
+    {
+        get
+        {
+            return underSun;
+        }
+
+        set
+        {
+            underSun = value;
+        }
+    }
+
+    private void checkExposure()
+    {
         Vector3 sunDir = sun.transform.forward;
         sunDir.Normalize();
         sunDir *= 100;
@@ -30,7 +49,7 @@ public class PlayerLogic : MonoBehaviour {
 
         foreach (Transform child in allChildren)
         {
-            
+
             if (!Physics.Raycast(child.position, child.position - sunDir, 10))
             {
                 Debug.DrawLine(child.position, child.position - sunDir, Color.red);
@@ -50,20 +69,6 @@ public class PlayerLogic : MonoBehaviour {
         else
         {
             UnderSun = false;
-        }
-
-    }
-
-    public bool UnderSun
-    {
-        get
-        {
-            return underSun;
-        }
-
-        set
-        {
-            underSun = value;
         }
     }
 
