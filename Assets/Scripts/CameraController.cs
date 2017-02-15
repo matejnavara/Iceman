@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour {
 	void Start () {
         nullCheck();
         offset = transform.position - player.transform.position;
-        zoomLimit = 30.0f;
+        zoomLimit = 20.0f;
 	}
 	
 	// Update is called once per frame

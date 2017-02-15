@@ -4,22 +4,31 @@ using UnityEngine.AI;
 public class MoveToPoint : MonoBehaviour
 {
     NavMeshAgent agent;
+    GameManager gm;
 
     void Start()
     {
         agent =  gameObject.GetComponent<NavMeshAgent>();
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!gm.isGameOver())
         {
-            RaycastHit hit;
-
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+            if (Input.GetMouseButtonDown(0))
             {
-                agent.destination = hit.point;
+                RaycastHit hit;
+
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+                {
+                    agent.destination = hit.point;
+                }
             }
+        }
+        else
+        {
+            agent.ResetPath();
         }
     }
 }

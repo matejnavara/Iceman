@@ -5,14 +5,12 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
-    private int index;
-
     //Control Elements
     public GameObject player;
-    public GameObject pauseButton;
+    public GameObject camera;
 
     //UI Elements
-    private Text timerText, playerSizeText, finalText, bestDistanceText, bestTimeText;
+    private Text distanceText, playerSizeText, finalText, bestDistanceText, bestTimeText;
     private Image sunIcon;
     private RectTransform tempIcon;
     public GameObject gameoverPanel, gameUi;
@@ -20,11 +18,13 @@ public class GameManager : MonoBehaviour {
 
     //Game Logic Elements
     public bool gameOver;
-    public bool paused;
-
 	private bool bestDistance;
-    private bool bestTime;
+    private int distance;
     private float timer;
+
+    private GameObject respawn;
+    private Vector3 cameraRespawn;
+    private Vector2 tempRespawn;
 
     public PlayerLogic pl;
     public SplashLogic sl;
@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
     void Awake()
     {
         GetThisGameManager();
+        nullCheck();
         //soundCheck();
     }
 
@@ -69,13 +70,10 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        playerScale = 7f;
         playerSize = 100f;
-        meltRate = 0.03f;
+        playerScale = 15f;
+        meltRate = 0.02f;
 
-        nullCheck();
-        gameoverPanel.SetActive(false);
-        Reset();
         print("START again");
     }
 
@@ -94,14 +92,18 @@ public class GameManager : MonoBehaviour {
         //}
 
         //Counts down from defined "timer" to reach Game Over.
-        if (!gameOver && !paused)
+        if (!gameOver)
         {
             gameUi.SetActive(true);
             gameoverPanel.SetActive(false);
+
+
             meltPlayer();
+
             timer += Time.deltaTime;
 
-            timerText.text = timer.ToString("F2");
+            //timerText.text = timer.ToString("F2");
+            distanceText.text = checkDistance().ToString() + "m";
             playerSizeText.text = playerSize.ToString("F0") + "%";
             
 
@@ -152,7 +154,7 @@ public class GameManager : MonoBehaviour {
         {
             if(tempIcon.rect.height < 400)
             {
-                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.4f);
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.5f);
 
             }
             //playerSize -= meltRate * tempIcon.rect.height/100;
@@ -162,7 +164,7 @@ public class GameManager : MonoBehaviour {
         {
             if (tempIcon.rect.height > 100)
             {
-                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 0.8f);
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 2.0f);
 
             }
             //playerSize -= (meltRate * 0.05f) * tempIcon.rect.height / 100;
@@ -180,35 +182,52 @@ public class GameManager : MonoBehaviour {
 
     }
 
+    int checkDistance()
+    {
+        distance = (int)(Vector3.Distance(respawn.transform.position, player.transform.position) * 3);
+
+        return distance;
+    }
+
 
     //GAME OVER METHODS
     //Called upon gameover, disable Player/HUD and display game over panel with final score/play again button/main menu button
     void gameFinished()
     {
         gameOver = true;
-        paused = true;
-        GameObject.FindGameObjectWithTag("Player").SetActive(false);
-        //gameUi.SetActive(false);
-        //gameoverPanel.SetActive(true);
-
-        //checkHighScore();
-
-        //meltAgainButton.onClick.AddListener(delegate { Reset(); });
-        //mainmenuButton.onClick.AddListener(delegate { MainMenu(); });
+        checkHighScore();
+        //GameObject.FindGameObjectWithTag("Player").SetActive(false);
 
     }
 
     void checkHighScore()
     {
+        //Add logic for final game over screen here.
+        if (PlayerPrefs.HasKey("bestDistance"))
+        {
+            if(distance > PlayerPrefs.GetInt("bestDistance"))
+            {
+                bestDistance = true;
+            }
+            else
+            {
+                bestDistance = false;
+            }
+        }
+        else
+        {
+            bestDistance = true;
+        }
 
         if (bestDistance)
         {
+            PlayerPrefs.SetInt("bestDistance", distance);
             bestDistanceText.text = "NEW HIGHSCORE!";
         }
         else {
-			bestDistanceText.text = "High Score: XXX";
+            bestDistanceText.text = "High Score: " +  PlayerPrefs.GetInt("bestDistance");
         }
-        finalText.text = "You survived for XXX seconds!";
+        finalText.text = "Alas Iceman is no more. He travelled " + distance + " metres before melting.";
     }
     
     //Public bool to check for gameover condition
@@ -220,15 +239,18 @@ public class GameManager : MonoBehaviour {
     //Resets the game loop upon pressing play again
     public void Reset()
     {
+
+        player.transform.position = new Vector3(0,0,0);
+        player.transform.localScale = new Vector3(playerScale, playerScale, playerScale);
+        playerSize = 100f;
+        camera.transform.position = cameraRespawn;
+        tempIcon.sizeDelta = tempRespawn;
         gameOver = false;
-        paused = false;
         bestDistance = false;
-        bestTime = false;
-        gameUi.SetActive(true);
-        gameoverPanel.SetActive(false);
+
         //audioBG = gameObject.GetComponent<AudioSource>();
-      
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     //Returns to main menu upon pressing main menu
@@ -248,9 +270,26 @@ public class GameManager : MonoBehaviour {
             pl = player.GetComponent<PlayerLogic>();
             sl = player.GetComponentInChildren<SplashLogic>();
         }
+        if(camera == null)
+        {
+            camera = GameObject.FindGameObjectWithTag("MainCamera");
+            cameraRespawn = camera.transform.position;
+        }
+        if (respawn == null)
+        {
+            respawn = GameObject.FindGameObjectWithTag("Respawn");
+        }
         if (gameoverPanel == null)
         {
             gameoverPanel = GameObject.Find("Canvas/GameOverPanel");
+        }
+        if (finalText == null)
+        {
+            finalText = GameObject.Find("Canvas/GameOverPanel/FinalText").GetComponent<Text>();
+        }
+        if (bestDistanceText == null)
+        {
+            bestDistanceText = GameObject.Find("Canvas/GameOverPanel/BestDistanceText").GetComponent<Text>();
         }
         if (meltAgainButton == null)
         {
@@ -260,9 +299,9 @@ public class GameManager : MonoBehaviour {
         {
             gameUi = GameObject.Find("Canvas/GameUI");
         }
-        if (timerText == null)
+        if (distanceText == null)
         {
-            timerText = GameObject.Find("Canvas/GameUI/TimerText").GetComponent<Text>();
+            distanceText = GameObject.Find("Canvas/GameUI/DistanceText").GetComponent<Text>();
         }
         if (playerSizeText == null)
         {
@@ -275,6 +314,7 @@ public class GameManager : MonoBehaviour {
         if (tempIcon == null)
         {
             tempIcon = GameObject.Find("Canvas/GameUI/Temperature").GetComponent<RectTransform>();
+            tempRespawn = tempIcon.sizeDelta;
         }
     }
 

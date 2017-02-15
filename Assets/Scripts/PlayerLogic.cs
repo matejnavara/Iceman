@@ -50,7 +50,7 @@ public class PlayerLogic : MonoBehaviour {
         foreach (Transform child in allChildren)
         {
 
-            if (!Physics.Raycast(child.position, child.position - sunDir, 10))
+            if (!Physics.Raycast(child.position, child.position - sunDir, 100))
             {
                 Debug.DrawLine(child.position, child.position - sunDir, Color.red);
                 inSun++;

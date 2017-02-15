@@ -12,16 +12,19 @@ public class PuddleLogic : MonoBehaviour {
 	void Start () {
 
         player = GameObject.FindGameObjectWithTag("Player");
-        puddleSize = 1.0f;
-        evaporateRate = 0.99f;
-        transform.localScale = new Vector3(player.transform.localScale.x / 10, transform.localScale.y, player.transform.localScale.z / 10);
+        if (player != null)
+        {
+            puddleSize = 1.0f;
+            evaporateRate = 0.001f;
+            transform.localScale = new Vector3(player.transform.localScale.x / 10, transform.localScale.y, player.transform.localScale.z / 10);
+        }
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        puddleSize = puddleSize * evaporateRate;
+        puddleSize -= evaporateRate;
         transform.localScale = new Vector3(transform.localScale.x * puddleSize, transform.localScale.y, transform.localScale.z * puddleSize);
 
         if(puddleSize < 0)
