@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour {
 
         playerSize = 100f;
         playerScale = 15f;
-        meltRate = 0.2f;
+        meltRate = 0.025f;
 
         print("START again");
     }
@@ -108,8 +108,8 @@ public class GameManager : MonoBehaviour {
             timer += Time.deltaTime;
 
             //timerText.text = timer.ToString("F2");
-            distanceText.text = checkDistance().ToString() + "m";
-            playerSizeText.text = playerSize.ToString("F0") + "%";
+            distanceText.text = checkDistance().ToString() + " m";
+            playerSizeText.text = playerSize.ToString("F0") + " %";
             
 
             if (playerSize <= 0)
@@ -219,12 +219,12 @@ public class GameManager : MonoBehaviour {
         if (bestDistance)
         {
             PlayerPrefs.SetInt("bestDistance", distance);
-            bestDistanceText.text = "NEW HIGHSCORE!";
+            bestDistanceText.text = "NEW BEST DISTANCE!";
         }
         else {
-            bestDistanceText.text = "High Score: " +  PlayerPrefs.GetInt("bestDistance");
+            bestDistanceText.text = "Best distance: " +  PlayerPrefs.GetInt("bestDistance");
         }
-        finalText.text = "Alas Iceman is no more. He travelled " + distance + " metres before melting.";
+        finalText.text = "Frostee travelled " + distance + " metres before melting.";
     }
 
     //Complete countdown
@@ -331,7 +331,7 @@ public class GameManager : MonoBehaviour {
         }
         if (tempIcon == null)
         {
-            tempIcon = GameObject.Find("Canvas/GameUI/Temperature").GetComponent<RectTransform>();
+            tempIcon = GameObject.Find("Canvas/GameUI/TemperatureImage/Temperature").GetComponent<RectTransform>();
             tempRespawn = tempIcon.sizeDelta;
         }
     }
