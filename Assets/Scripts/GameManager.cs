@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour {
 
     public PlayerLogic pl;
     public SplashLogic sl;
+    public Renderer playerMat;
     public float playerScale;
     public float playerSize;
     public float meltRate;
@@ -159,7 +160,7 @@ public class GameManager : MonoBehaviour {
             }
             //playerSize -= meltRate * tempIcon.rect.height/100;
             sl.PlayEffects();
-            player.GetComponentInChildren<Renderer>().material.SetFloat("_ReflectBrightness", 1.0f);
+            playerMat.sharedMaterial.SetFloat("_ReflectBrightness", 1.0f);
             GameObject newPuddle = (GameObject)Instantiate(Resources.Load("Prefabs/Puddle"), player.transform.position, player.transform.rotation);
             sunIcon.color = Color.yellow;
         }
@@ -172,7 +173,7 @@ public class GameManager : MonoBehaviour {
             }
             //playerSize -= (meltRate * 0.05f) * tempIcon.rect.height / 100;
             sl.StopEffects();
-            player.GetComponentInChildren<Renderer>().material.SetFloat("_ReflectBrightness", 0.0f);
+            playerMat.sharedMaterial.SetFloat("_ReflectBrightness", 0.0f);
             sunIcon.color = Color.black;
         }
         playerSize -= meltRate * tempIcon.rect.height / 100;
@@ -267,6 +268,7 @@ public class GameManager : MonoBehaviour {
             player = GameObject.FindGameObjectWithTag("Player");
             pl = player.GetComponent<PlayerLogic>();
             sl = player.GetComponentInChildren<SplashLogic>();
+            playerMat = player.GetComponentInChildren<Renderer>();
         }
         if(camera == null)
         {

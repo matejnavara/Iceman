@@ -5,13 +5,19 @@ using UnityEngine;
 public class PlayerLogic : MonoBehaviour {
 
     public GameObject sun;
+    public Vector3 sunDir;
 
+    private Transform[] allChildren;
     private bool underSun;
 
     // Use this for initialization
     void Start () {
      
         sun = GameObject.FindGameObjectWithTag("Light");
+        sunDir = sun.transform.forward;
+        sunDir.Normalize();
+    
+        allChildren = GetComponentsInChildren<Transform>();
         UnderSun = false;
 
     }
@@ -38,30 +44,26 @@ public class PlayerLogic : MonoBehaviour {
 
     private void checkExposure()
     {
-        Vector3 sunDir = sun.transform.forward;
-        sunDir.Normalize();
-        sunDir *= 100;
-
+        
         int inSun = 0;
         int outSun = 0;
-
-        Transform[] allChildren = GetComponentsInChildren<Transform>();
 
         foreach (Transform child in allChildren)
         {
 
-            if (!Physics.Raycast(child.position, child.position - sunDir, 100))
+            if (!Physics.Raycast(child.position, -sunDir))
             {
-                Debug.DrawLine(child.position, child.position - sunDir, Color.red);
+                Debug.DrawRay(child.position, -sunDir, Color.red);
                 inSun++;
             }
             else
             {
-                Debug.DrawLine(child.position, child.position - sunDir, Color.green);
+                Debug.DrawRay(child.position, -sunDir, Color.green);
+                
                 outSun++;
             }
         }
-        print("In sun: " + inSun + " VS Out sun: " + outSun);
+        //print("In sun: " + inSun + " VS Out sun: " + outSun);
         if (inSun > outSun)
         {
             UnderSun = true;
