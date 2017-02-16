@@ -13,13 +13,24 @@ public class SplashLogic : MonoBehaviour {
 		
 	}
 	
-	public void Fire()
+	public void PlayEffects()
     {
         foreach(ParticleSystem effect in effects)
         {
             if (!effect.isPlaying)
             {
                 effect.Play();
+            }
+        }
+    }
+
+    public void StopEffects()
+    {
+        foreach (ParticleSystem effect in effects)
+        {
+            if (effect.isPlaying)
+            {
+                effect.Stop();
             }
         }
     }

@@ -152,33 +152,31 @@ public class GameManager : MonoBehaviour {
     {
         if (pl.UnderSun)
         {
-            if(tempIcon.rect.height < 400)
+            if(tempIcon.rect.height < 200)
             {
-                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.5f);
+                tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y + 0.3f);
 
             }
             //playerSize -= meltRate * tempIcon.rect.height/100;
+            sl.PlayEffects();
+            player.GetComponentInChildren<Renderer>().material.SetFloat("_ReflectBrightness", 1.0f);
+            GameObject newPuddle = (GameObject)Instantiate(Resources.Load("Prefabs/Puddle"), player.transform.position, player.transform.rotation);
             sunIcon.color = Color.yellow;
         }
         else
         {
-            if (tempIcon.rect.height > 100)
+            if (tempIcon.rect.height > 50)
             {
                 tempIcon.sizeDelta = new Vector2(tempIcon.sizeDelta.x, tempIcon.sizeDelta.y - 2.0f);
 
             }
             //playerSize -= (meltRate * 0.05f) * tempIcon.rect.height / 100;
+            sl.StopEffects();
+            player.GetComponentInChildren<Renderer>().material.SetFloat("_ReflectBrightness", 0.0f);
             sunIcon.color = Color.black;
         }
         playerSize -= meltRate * tempIcon.rect.height / 100;
         player.transform.localScale = new Vector3(playerScale * (playerSize / 100), playerScale * (playerSize / 100), playerScale * (playerSize / 100));
-
-        if((int)playerSize % 5 == 0)
-        {
-            print("Spawning Puddle. Sploosh!");
-            sl.Fire();
-            GameObject newPuddle = (GameObject)Instantiate(Resources.Load("Prefabs/Puddle"), player.transform.position, player.transform.rotation);
-        }
 
     }
 

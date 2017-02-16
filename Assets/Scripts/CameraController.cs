@@ -20,17 +20,17 @@ public class CameraController : MonoBehaviour {
 	void LateUpdate () {
 
         nullCheck();
-        if(gm.playerSize > zoomLimit)
-        {
-            transform.position = player.transform.position + (offset * (gm.playerSize / 100));
-        }
-        else
-        {
-            transform.position = player.transform.position + (offset * (zoomLimit / 100));
-        }
-        
-	
-	}
+        //if(gm.playerSize > zoomLimit)
+        //{
+        //    transform.position = player.transform.position + (offset * (gm.playerSize / 100));
+        //}
+        //else
+        //{
+        //    transform.position = player.transform.position + (offset * (zoomLimit / 100));
+        //}
+        transform.position = player.transform.position + offset;
+
+    }
 
     void nullCheck()
     {

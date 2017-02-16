@@ -15,7 +15,7 @@ public class PuddleLogic : MonoBehaviour {
         if (player != null)
         {
             puddleSize = 1.0f;
-            evaporateRate = 0.001f;
+            evaporateRate = 0.005f;
             transform.localScale = new Vector3(player.transform.localScale.x / 10, transform.localScale.y, player.transform.localScale.z / 10);
         }
 		
@@ -27,7 +27,7 @@ public class PuddleLogic : MonoBehaviour {
         puddleSize -= evaporateRate;
         transform.localScale = new Vector3(transform.localScale.x * puddleSize, transform.localScale.y, transform.localScale.z * puddleSize);
 
-        if(puddleSize < 0)
+        if(puddleSize <= 0.1f)
         {
             print("Destroying: " + this.name);  
             Destroy(this.gameObject);
