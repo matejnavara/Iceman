@@ -15,7 +15,7 @@ public class MoveToPoint : MonoBehaviour
 
     void Update()
     {
-        if (!gm.isGameOver())
+        if (!gm.isGameOver() && !gm.countDown)
         {
             if (Input.GetMouseButtonDown(0))
             {

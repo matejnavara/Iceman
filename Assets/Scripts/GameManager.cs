@@ -8,16 +8,18 @@ public class GameManager : MonoBehaviour {
     //Control Elements
     public GameObject player;
     public GameObject camera;
+    public GameObject countdownObj;
 
     //UI Elements
     private Text distanceText, playerSizeText, finalText, bestDistanceText, bestTimeText;
     private Image sunIcon;
     private RectTransform tempIcon;
     public GameObject gameoverPanel, gameUi;
-    private Button meltAgainButton, mainmenuButton;
+    public Button meltAgainButton, mainmenuButton;
 
     //Game Logic Elements
     public bool gameOver;
+    public bool countDown;
 	private bool bestDistance;
     private int distance;
     private float timer;
@@ -71,9 +73,15 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        gameOver = false;
+        countDown = true;
+
+        gameUi.SetActive(false);
+        gameoverPanel.SetActive(false);
+
         playerSize = 100f;
         playerScale = 15f;
-        meltRate = 0.02f;
+        meltRate = 0.2f;
 
         print("START again");
     }
@@ -93,12 +101,8 @@ public class GameManager : MonoBehaviour {
         //}
 
         //Counts down from defined "timer" to reach Game Over.
-        if (!gameOver)
+        if (!gameOver && !countDown)
         {
-            gameUi.SetActive(true);
-            gameoverPanel.SetActive(false);
-
-
             meltPlayer();
 
             timer += Time.deltaTime;
@@ -113,13 +117,6 @@ public class GameManager : MonoBehaviour {
                 gameFinished();
                 print("GAME OVER");
             }
-        }
-        else
-        {
-            
-            gameUi.SetActive(false);
-            gameoverPanel.SetActive(true);
-            meltAgainButton.onClick.AddListener(delegate { Reset(); });
         }
         
     }
@@ -194,9 +191,10 @@ public class GameManager : MonoBehaviour {
     void gameFinished()
     {
         gameOver = true;
+        gameUi.SetActive(false);
+        gameoverPanel.SetActive(true);
         checkHighScore();
         //GameObject.FindGameObjectWithTag("Player").SetActive(false);
-
     }
 
     void checkHighScore()
@@ -228,6 +226,22 @@ public class GameManager : MonoBehaviour {
         }
         finalText.text = "Alas Iceman is no more. He travelled " + distance + " metres before melting.";
     }
+
+    //Complete countdown
+    public void countdownComplete()
+    {
+        print("COUNTDOWN DONE!");
+        countDown = false;
+        gameUi.SetActive(true);
+        countdownObj.SetActive(false);
+    }
+
+    public void restartCountdown()
+    {
+        countDown = true;
+        gameUi.SetActive(false);
+        countdownObj.SetActive(true);
+    }
     
     //Public bool to check for gameover condition
     public bool isGameOver()
@@ -238,7 +252,7 @@ public class GameManager : MonoBehaviour {
     //Resets the game loop upon pressing play again
     public void Reset()
     {
-        
+        gameoverPanel.SetActive(false);
         player.transform.position = new Vector3(0,0,0);
         player.transform.localScale = new Vector3(playerScale, playerScale, playerScale);
         playerSize = 100f;
@@ -246,9 +260,9 @@ public class GameManager : MonoBehaviour {
         tempIcon.sizeDelta = tempRespawn;
         gameOver = false;
         bestDistance = false;
+        restartCountdown();
 
         //audioBG = gameObject.GetComponent<AudioSource>();
-
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -274,6 +288,10 @@ public class GameManager : MonoBehaviour {
         {
             camera = GameObject.FindGameObjectWithTag("MainCamera");
             cameraRespawn = camera.transform.position;
+        }
+        if (countdownObj == null)
+        {
+            countdownObj = GameObject.Find("Canvas/Countdown");
         }
         if (respawn == null)
         {
