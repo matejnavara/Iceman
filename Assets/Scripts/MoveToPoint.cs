@@ -5,6 +5,7 @@ public class MoveToPoint : MonoBehaviour
 {
     NavMeshAgent agent;
     GameManager gm;
+    public GameObject cross;
 
     void Start()
     {
@@ -29,6 +30,22 @@ public class MoveToPoint : MonoBehaviour
         else
         {
             agent.ResetPath();
+        }
+
+        if (agent.hasPath)
+        {
+            if(cross == null)
+            {
+                cross = (GameObject)Instantiate(Resources.Load("Prefabs/Cross"), agent.destination, agent.transform.rotation);
+            }
+            else
+            {
+                cross.transform.position = agent.destination;
+            } 
+        }
+        else
+        {
+            Destroy(cross);
         }
     }
 }

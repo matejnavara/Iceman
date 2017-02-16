@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour {
     //Resets the game loop upon pressing play again
     public void Reset()
     {
-
+        
         player.transform.position = new Vector3(0,0,0);
         player.transform.localScale = new Vector3(playerScale, playerScale, playerScale);
         playerSize = 100f;
