@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     private RectTransform tempIcon;
     public GameObject gameoverPanel, gameUi;
     public Button meltAgainButton, mainmenuButton;
+    private PunGenerator punTime;
 
     //Game Logic Elements
     public bool gameOver;
@@ -81,7 +82,7 @@ public class GameManager : MonoBehaviour {
 
         playerSize = 100f;
         playerScale = 15f;
-        meltRate = 0.025f;
+        meltRate = 0.03f;
 
         print("START again");
     }
@@ -117,6 +118,11 @@ public class GameManager : MonoBehaviour {
                 gameFinished();
                 print("GAME OVER");
             }
+        }
+
+        if(countDown && player.transform.position != respawn.transform.position)
+        {
+            player.transform.position = respawn.transform.position;
         }
         
     }
@@ -194,6 +200,7 @@ public class GameManager : MonoBehaviour {
         gameUi.SetActive(false);
         gameoverPanel.SetActive(true);
         checkHighScore();
+        punTime.updatePun();
         //GameObject.FindGameObjectWithTag("Player").SetActive(false);
     }
 
@@ -224,7 +231,7 @@ public class GameManager : MonoBehaviour {
         else {
             bestDistanceText.text = "Best distance: " +  PlayerPrefs.GetInt("bestDistance");
         }
-        finalText.text = "Frostee travelled " + distance + " metres before melting.";
+        finalText.text = "Alas Frostee travelled " + distance + " metres before melting.";
     }
 
     //Complete countdown
@@ -300,6 +307,7 @@ public class GameManager : MonoBehaviour {
         if (gameoverPanel == null)
         {
             gameoverPanel = GameObject.Find("Canvas/GameOverPanel");
+            punTime = gameoverPanel.GetComponentInChildren<PunGenerator>();
         }
         if (finalText == null)
         {

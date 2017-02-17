@@ -7,18 +7,33 @@ using UnityEngine.UI;
 
 public class PunGenerator : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    private Text tombText;
+    private XmlDocument xmlDoc;
 
-        Text tombText =gameObject.GetComponent<Text>();
-        TextAsset file = (TextAsset) Resources.Load("puns");
+    // Use this for initialization
+    void Start () {
 
-        //XmlTextReader reader = new XmlTextReader(new StringReader(file.text));
+        tombText = gameObject.GetComponent<Text>();
+        xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 
-        //XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-        //xmlDoc.LoadXml(file.text); // load the file.
-        //XmlNodeList punList = xmlDoc.GetElementsByTagName("PunList"); // array of the level nodes.
+    }
+
+    string generatePun()
+    {
+        
+        xmlDoc.LoadXml(File.ReadAllText(Application.dataPath + "/Resources/puns.xml")); // load the file.
+        XmlNodeList punList = xmlDoc.SelectNodes("/PunList/pun");
+        int selectedPun = Random.Range(0, punList.Count);
+
+        return ((XmlElement)punList[selectedPun]).GetAttribute("num");
+
         //print("LIST of:  " + punList.Count);
     }
+
+    public void updatePun()
+    {
+        tombText.text = generatePun();
+    }
+
 	
 }

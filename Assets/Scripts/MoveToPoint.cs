@@ -4,12 +4,14 @@ using UnityEngine.AI;
 public class MoveToPoint : MonoBehaviour
 {
     NavMeshAgent agent;
+    Animator animator;
     GameManager gm;
     public GameObject cross;
 
     void Start()
     {
         agent =  gameObject.GetComponent<NavMeshAgent>();
+        animator = gameObject.GetComponent<Animator>();
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }
 
@@ -34,6 +36,8 @@ public class MoveToPoint : MonoBehaviour
 
         if (agent.hasPath)
         {
+            animator.speed = 1;
+
             if(cross == null)
             {
                 cross = (GameObject)Instantiate(Resources.Load("Prefabs/Cross"), agent.destination, agent.transform.rotation);
@@ -45,6 +49,7 @@ public class MoveToPoint : MonoBehaviour
         }
         else
         {
+            animator.speed = 0;
             Destroy(cross);
         }
     }
