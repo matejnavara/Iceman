@@ -38,7 +38,7 @@ public class MainMenuScript : MonoBehaviour {
         }
         else
         {
-            highscore.SetActive(false);
+            highscore.GetComponent<Text>().text = "Best distance: 0m";
         }
     }
 }

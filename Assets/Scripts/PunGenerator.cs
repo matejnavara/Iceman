@@ -7,12 +7,15 @@ using UnityEngine.UI;
 
 public class PunGenerator : MonoBehaviour {
 
+    private TextAsset punAsset;
     private Text tombText;
+    private Text tombDate;
     private XmlDocument xmlDoc;
 
     // Use this for initialization
     void Start () {
 
+        punAsset = (TextAsset)Resources.Load("puns");
         tombText = gameObject.GetComponent<Text>();
         xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 
@@ -20,8 +23,9 @@ public class PunGenerator : MonoBehaviour {
 
     string generatePun()
     {
-        
-        xmlDoc.LoadXml(File.ReadAllText(Application.dataPath + "/Resources/puns.xml")); // load the file.
+
+        //xmlDoc.LoadXml(File.ReadAllText(Application.dataPath + "/Resources/puns.xml")); // load the file.
+        xmlDoc.LoadXml(punAsset.text);
         XmlNodeList punList = xmlDoc.SelectNodes("/PunList/pun");
         int selectedPun = Random.Range(0, punList.Count);
 

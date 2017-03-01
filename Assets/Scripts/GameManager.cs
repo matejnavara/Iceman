@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
     public GameObject gameoverPanel, gameUi;
     public Button meltAgainButton, mainmenuButton;
     private PunGenerator punTime;
+    private DateGenerator dateGen;
 
     //Game Logic Elements
     public bool gameOver;
@@ -82,7 +83,7 @@ public class GameManager : MonoBehaviour {
 
         playerSize = 100f;
         playerScale = 15f;
-        meltRate = 0.03f;
+        meltRate = 0.3f;
 
         print("START again");
     }
@@ -201,6 +202,7 @@ public class GameManager : MonoBehaviour {
         gameoverPanel.SetActive(true);
         checkHighScore();
         punTime.updatePun();
+        dateGen.updateDate();
         //GameObject.FindGameObjectWithTag("Player").SetActive(false);
     }
 
@@ -231,7 +233,7 @@ public class GameManager : MonoBehaviour {
         else {
             bestDistanceText.text = "Best distance: " +  PlayerPrefs.GetInt("bestDistance");
         }
-        finalText.text = "Alas Frostee travelled " + distance + " metres before melting.";
+        finalText.text = "Poor Frosty melted after " + distance + " metres.";
     }
 
     //Complete countdown
@@ -308,6 +310,7 @@ public class GameManager : MonoBehaviour {
         {
             gameoverPanel = GameObject.Find("Canvas/GameOverPanel");
             punTime = gameoverPanel.GetComponentInChildren<PunGenerator>();
+            dateGen = gameoverPanel.GetComponentInChildren<DateGenerator>();
         }
         if (finalText == null)
         {
